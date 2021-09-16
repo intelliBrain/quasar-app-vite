@@ -34,7 +34,7 @@ const additionalDataSass = `@import 'quasar/src/css/helpers/string.sass'
 // Should be an argument to the plugin
 export interface Configuration {
   pwa?: VitePWAOptions,
-  ssr?: 'server' | 'client'
+  ssr?: 'server' | 'client' | 'ssg'
 }
 
 export const QuasarPlugin = (configuration?: Configuration): Plugin[] => {
@@ -52,7 +52,7 @@ export const QuasarPlugin = (configuration?: Configuration): Plugin[] => {
         transform: (html) => {
           let entry: string
           switch (configuration?.ssr) {
-            case 'server' || 'client':
+            case 'server' || 'client' || 'ssg':
               entry = './ssr/entry-client.ts'
               break;
             default:
@@ -98,7 +98,7 @@ export const QuasarPlugin = (configuration?: Configuration): Plugin[] => {
         return {
           build: {
             ssr: configuration?.ssr === 'server' ? './ssr/entry-server.ts' : false,
-            ssrManifest: configuration?.ssr === 'client'
+            ssrManifest: (configuration?.ssr === 'client' || configuration?.ssr === 'ssg')
           },
           ssr: {
             noExternal: configuration?.ssr ? ['quasar'] : undefined
